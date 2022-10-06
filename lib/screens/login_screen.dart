@@ -1,13 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:work_collaborative/constants/colors.dart';
+import 'package:work_collaborative/constants/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:work_collaborative/repository/auth_repository.dart';
+import 'package:work_collaborative/screens/home_screen.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({Key? key}) : super(key: key);
-  void signInwithGoogle(WidgetRef ref) {
-    ref.read(AuthRepositoryProvider).signinWithGoogle();
+
+  void signInwithGoogle(WidgetRef ref, BuildContext context) async {
+    final eMessenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final errorModel =
+        await ref.read(AuthRepositoryProvider).signinWithGoogle();
+    if (errorModel.error != null) {
+      eMessenger.showSnackBar(
+        SnackBar(
+          content: Text(errorModel.error!),
+        ),
+      );
+    } else {
+      ref.read(userProvider.notifier).update(
+            (state) => errorModel.data,
+          );
+      navigator.push(
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
+    }
   }
 
   @override
@@ -80,7 +101,7 @@ class LoginScreen extends ConsumerWidget {
                 height: 40,
               ),
               ElevatedButton.icon(
-                onPressed: () => signInwithGoogle(ref),
+                onPressed: () => signInwithGoogle(ref, context),
                 icon: Image.asset(
                   'lib/assets/g-logo-2.png',
                   height: 20,
@@ -92,9 +113,7 @@ class LoginScreen extends ConsumerWidget {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(150, 50),
-                  backgroundColor: Colors.white,
-                ),
+                    minimumSize: const Size(150, 50), primary: Colors.white),
               ),
             ],
           ),
