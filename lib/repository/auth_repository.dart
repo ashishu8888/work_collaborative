@@ -47,6 +47,43 @@ class AuthRepository {
           case 200:
             final newUser = userAcc.copyWith(
               uid: jsonDecode(res.body)['user']['_id'],
+              token: jsonDecode(res.body)['token'],
+            );
+            error = ErroModel(error: null, data: newUser);
+            break;
+        }
+        error;
+      }
+    } catch (e) {
+      error = ErroModel(error: e.toString(), data: null);
+    }
+    return error;
+  }
+
+  Future<ErroModel> signinWitxhGoogle() async {
+    ErroModel error = ErroModel(error: "some unexpected occured", data: null);
+    try {
+      final user = await _googleSignIn.signIn();
+      if (user != null) {
+        final userAcc = UserModel(
+          email: user.email,
+          name: user.displayName!,
+          profilePic: user.photoUrl!,
+          uid: '',
+          token: '',
+        );
+        final res = await _client.post(
+          Uri.parse('$host/api/signup'),
+          body: userAcc.toJson(),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+        );
+        switch (res.statusCode) {
+          case 200:
+            final newUser = userAcc.copyWith(
+              uid: jsonDecode(res.body)['user']['_id'],
+              token: jsonDecode(res.body)['token'],
             );
             error = ErroModel(error: null, data: newUser);
             break;
