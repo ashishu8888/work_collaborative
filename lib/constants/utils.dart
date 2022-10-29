@@ -1,7 +1,7 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 
-const host = 'http://10.20.13.228:3000';
+const host = 'http://10.20.11.92:3000';
 
 class ColorForApp {
   static final bgmColor = Color(0x3F3F3F);

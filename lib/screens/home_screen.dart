@@ -9,7 +9,7 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: Center(
-        child: Text(ref.watch(userProvider)!.name),
+        child: Text(ref.watch(userProvider)!.email),
       ),
     );
   }

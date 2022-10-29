@@ -77,12 +77,16 @@ class AuthRepository {
         });
         switch (res.statusCode) {
           case 200:
-            final newUser = UserModel.fromJson(res.body);
+            final newUser =
+                UserModel.fromJson(jsonEncode(jsonDecode(res.body)['users']))
+                    .copyWith(
+              token: token,
+            );
             break;
         }
       }
 
-      error;
+      // error;
     } catch (e) {
       error = ErroModel(error: e.toString(), data: null);
     }
